@@ -4,7 +4,7 @@ return [
         'mac' => '00:1c:c0:71:ff:28',
         'host' => '192.168.2.3',
         'pingPort' => 22,
-        'password' => '$2y$10$Oty.zxL4C.UsqXH/2ieznOuseiFonp6AgTc75NnhDUbzLaXq5kOJ6', // Hashed password
+        'password' => 'hashed-password',
         'pcName' => 'Medina',
     ],
 ];
@@ -16,7 +16,7 @@ return [
 //        'mac' => '',
 //        'host' => '',
 //        'pingPort' => ,
-//        'password' => '', // Hashed password
+//        'password' => '',
 //        'pcName' => '',
 //    ],
 ?>
