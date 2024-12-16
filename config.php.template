@@ -1,0 +1,22 @@
+<?php
+return [
+    'medina' => [
+        'mac' => '00:1c:c0:71:ff:28',
+        'host' => '192.168.2.3',
+        'pingPort' => 22,
+        'password' => '$2y$10$Oty.zxL4C.UsqXH/2ieznOuseiFonp6AgTc75NnhDUbzLaXq5kOJ6', // Hashed password
+        'pcName' => 'Medina',
+    ],
+];
+// To hash password run this on console:
+// php -r 'echo "pwd: "; $p = trim(fgets(STDIN)); echo password_hash($p, PASSWORD_BCRYPT) . PHP_EOL;'
+//
+// -- Template --
+//    '' => [
+//        'mac' => '',
+//        'host' => '',
+//        'pingPort' => ,
+//        'password' => '', // Hashed password
+//        'pcName' => '',
+//    ],
+?>
