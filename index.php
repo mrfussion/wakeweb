@@ -36,7 +36,7 @@ function wakeExec($wol, $mac) {
 }
 
 function checkOnline($host, $port, $timeout=1) {
-  return fsockopen($host, $port,$errno, $errstr, $timeout) ? true : false;
+  return @fsockopen($host, $port,$errno, $errstr, $timeout) ? true : false;
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action'])) {
