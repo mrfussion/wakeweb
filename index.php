@@ -205,7 +205,7 @@ $online = checkOnline($pcConfig['host'], $pcConfig['pingPort']);
 
     <!-- Show Status -->
     <div class="text-center mt-3">
-      <?= $status ?>
+      <?= isset($status) ? $status : ''; ?>
     </div>
   </div>
 
