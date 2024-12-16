@@ -26,19 +26,6 @@
 $config = include('config.php');
 $wakeOnLan = '/usr/bin/wakeonlan';
 
-$pcSelected = isset($_GET['pc']) ? $_GET['pc'] : array_key_first($config);
-$pcConfig = $config[$pcSelected];
-
-if (isset($_POST['wake']) && isset($_POST['pwd'])) {
-  if (password_verify($_POST['pwd'], $pcConfig['password'])) {
-    $status = wakeExec($wakeOnLan, $pcConfig['mac']) ? "Sended" : "Failed";
-  } else {
-    $status = 'Incorrect password';
-  }
-}
-
-$online = fsockopen($pcConfig['host'], $pcConfig['pingPort'],$errno, $errstr, 1);
-
 function wakeExec($wol, $mac) {
   $result = shell_exec($wol . " " . $mac . " " . ">/dev/null 2>&1; echo $?");
   if ($result == 0) {
@@ -47,6 +34,55 @@ function wakeExec($wol, $mac) {
     return "Failed: <pre>" . $result . '</pre>';
   }
 }
+
+function checkOnline($host, $port, $timeout=1) {
+  return fsockopen($host, $port,$errno, $errstr, $timeout) ? true : false;
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action'])) {
+    $response = [];
+
+    if ($_GET['action'] == 'wake' && isset($_GET['computer'])) {
+        $pcSelected = $_GET['computer'];
+        $pcConfig = $config[$pcSelected];
+        
+        if ($pcConfig) {
+            $status = wakeExec($wakeOnLan, $pcConfig['mac']) ? "Sended" : "Failed";
+            $response['status'] = $status;
+            echo json_encode($response);
+        } else {
+            echo json_encode(['error' => 'computer not found']);
+        }
+    } elseif ($_GET['action'] == 'status' && isset($_GET['computer'])) {
+        $pcSelected = $_GET['computer'];
+        $pcConfig = $config[$pcSelected];
+
+        if($pcConfig && checkOnline($pcSelected, $pcConfig['pingPort'])) {
+            echo json_encode(['status' => 'online']);
+        } else {
+            echo json_encode(['status' => 'offline']);
+        }
+    } else {
+        echo json_encode(['error' => 'Invalid action or missing parameters']);
+    }
+    exit;
+}
+
+$pcSelected = isset($_GET['computer']) ? $_GET['computer'] : array_key_first($config);
+$pcConfig = $config[$pcSelected];
+
+if (isset($_POST['wake']) && isset($_POST['pwd'])) {
+    $pcSelected = isset($_GET['computer']) ? $_GET['computer'] : array_key_first($config);
+    $pcConfig = $config[$pcSelected];
+
+    if (password_verify($_POST['pwd'], $pcConfig['password'])) {
+        $status = wakeExec($wakeOnLan, $pcConfig['mac']) ? "Sended" : "Failed";
+    } else {
+        $status = 'Incorrect password';
+    }
+}
+
+$online = checkOnline($pcConfig['host'], $pcConfig['pingPort']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -135,7 +171,7 @@ function wakeExec($wol, $mac) {
       <!-- Select computer -->
       <div class="mb-3">
         <label for="pc-select" class="form-label">Select computer</label>
-        <select id="pc-select" class="form-select" name="pc" onchange="pcSelected()">
+        <select id="pc-select" class="form-select" name="computer" onchange="pcSelected()">
           <?php
             foreach ($config as $key => $value) {
               echo '<option value="' . $key . '" ' . ($key === $pcSelected ? "selected" : "") . '>' . $value["pcName"] . '</option>';
@@ -201,7 +237,7 @@ function wakeExec($wol, $mac) {
     function pcSelected() {
       const selected = document.getElementById("pc-select").value;
       const url = new URL(window.location);
-      url.searchParams.set('pc', selected);
+      url.searchParams.set('computer', selected);
       window.open(url, "_self");
     }
 
