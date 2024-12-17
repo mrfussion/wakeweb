@@ -11,6 +11,7 @@ Wakeweb is a simple and user-friendly web interface that allows you to remotely 
 - **Responsive Design**: Works on any device with a modern browser.
 - **Easy Configuration**: Easily add new computers to the configuration by modifying a simple `config.php` file.
 - **API Access**: Allows interacting with the WOL system via REST API to wake up or check the status of computers.
+- **Docker Support**: Easily deploy and run WakeWeb in a containerized environment using Docker.
 
 ## Screenshots
 
@@ -34,7 +35,7 @@ git clone https://github.com/mrfussion/wakeweb.git
 ```
 
 ### 2. Rename and configure `config.php`:
-#### 1. **Rename the configuration file**:
+#### **Rename the configuration file**:
 In the directory, you'll find a file called `config.php.template`. Rename it to `config.php`:
 
 ```bash
@@ -42,10 +43,10 @@ cd wakeweb
 mv config.php.template config.php
 ```
 
-#### 2. **Configure your computers**:
+#### **Configure your computers**:
 Open the `config.php` file and modify the values for each computer (e.g., the computer named `'medina'`). Make sure to set the MAC address, IP address, ping port, and computer name.
 
-#### 3. **Generate the password hash**:
+#### **Generate the password hash**:
 To secure the passwords, they should be stored in a hashed format. To generate a secure password hash, run the following command in your console:
 
 ```bash
@@ -60,7 +61,7 @@ $2y$10$Oty.zxL4C.UsqXH/2ieznOuseiFonp6AgTc75NnhDUbzLaXq5kOJ6
 
 Replace the password in `config.php` with this hashed value in the corresponding section of the computer.
 
-#### 4. **Add more computers**:
+#### **Add more computers**:
 To add more computers, simply copy and paste the block for `'medina'` and replace the corresponding values with the new computers's information.
 
 Example:
@@ -80,6 +81,59 @@ Ensure that your web server (e.g., Apache, Nginx) is properly configured to serv
 
 ### 4. Test the setup:
 Visit the webpage in your browser, select a computer, enter the password, and click the "Wake up" button to send the WOL packet.
+
+## Installation with Docker
+
+You can easily run **WakeWeb** using Docker to simplify deployment.
+
+### 1. Prerequisites
+
+Make sure you have the following installed on your system:
+
+- **Docker**: [Install Docker](https://docs.docker.com/get-docker/)
+
+
+### 2. Build the Docker Image
+
+#### First, clone the repository and navigate to the project directory:
+
+```bash
+git clone https://github.com/mrfussion/wakeweb.git
+cd wakeweb
+```
+
+#### Configure your computers:
+
+Open the config.php file and modify the values for each computer (e.g., the computer named 'medina'). Make sure to set the MAC address, IP address, ping port, and computer name.
+
+#### Now, build the Docker image using the following command:
+
+```bash
+docker build -t wakeweb .
+```
+
+- `-t wakeweb`: Tags the image with the name wakeweb for easier reference.
+
+### 3. Run the Container
+To start the container and make WakeWeb available locally, run:
+
+```bash
+docker run -d --name wakeweb -p 8080:80 wakeweb
+```
+
+Explanation of options:
+
+- `-d`: Runs the container in the background.
+- `--name wakeweb`: Assigns the container a name for easy management.
+- `-p 8080:80`: Maps port 80 of the container to port 8080 on your local machine.
+
+### 4. Access WakeWeb
+Once the container is running, open your web browser and visit:
+
+```
+http://localhost:8080
+```
+You should see the WakeWeb interface.
 
 ## Usage
 
